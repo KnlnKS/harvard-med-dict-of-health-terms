@@ -2,3 +2,5 @@
 __pycache__/
 _site/
 .DS_Store
+target/
+.tools/

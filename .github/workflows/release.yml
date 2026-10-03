@@ -1,0 +1,33 @@
+name: Release dictionary CLI
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build Linux release binary
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          version=$(cargo +stable metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
+          [ "v$version" = "$GITHUB_REF_NAME" ]
+          cargo +stable build --release --locked
+          target/release/health-dictionary --version
+          mkdir dist
+          tar -czf dist/health-dictionary-linux-x86_64.tar.gz -C target/release health-dictionary
+          cd dist
+          sha256sum health-dictionary-linux-x86_64.tar.gz > SHA256SUMS
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/health-dictionary-linux-x86_64.tar.gz dist/SHA256SUMS --verify-tag --title "Health dictionary $GITHUB_REF_NAME" --generate-notes
