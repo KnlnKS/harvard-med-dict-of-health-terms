@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#a51c30">
+  <meta name="description" content="Browse and search {{count}} medical terms and their complete definitions from Harvard Health Publishing. An independent, single-page health dictionary.">
+  <title>Health Terms — A Medical Dictionary</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./search.js" defer></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#dictionary">Skip to dictionary</a>
+  <header class="masthead wrap">
+    <a class="wordmark" href="./" aria-label="Health Terms home"><span class="brand-mark" aria-hidden="true">h.</span><span>HEALTH TERMS<span class="brand-caption">An independent reference</span></span></a>
+    <a class="masthead-source" href="https://www.health.harvard.edu/medical-dictionary-of-health-terms">Definitions by Harvard Health <span aria-hidden="true">↗</span></a>
+  </header>
+  <div class="hero wrap">
+    <p class="eyebrow"><span class="small-rule" aria-hidden="true"></span> THE MEDICAL DICTIONARY, A–Z</p>
+    <h1>Health, in plain words.</h1>
+    <div class="hero-bottom"><p>A little clarity goes a long way. Explore the language of health,<br class="desktop-break"> with definitions from Harvard Health Publishing.</p><p class="collection-note"><strong>{{count}}</strong><span>terms. One place.</span></p></div>
+  </div>
+  <div class="dictionary-layout wrap">
+    <aside class="letter-index" aria-label="Dictionary index">
+      <div class="index-title">BROWSE BY LETTER</div>
+      <nav aria-label="Browse terms by letter">{{navigation}}</nav>
+      <a class="back-to-top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </aside>
+    <main id="dictionary" tabindex="-1">
+      <div class="search-tools" id="search-tools" hidden>
+        <label for="search">Find a term or search a definition</label>
+        <div class="search-field"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="search" type="search" placeholder="Try “blood pressure”" autocomplete="off" spellcheck="false" aria-describedby="result-count"><button id="clear-search" type="button" aria-label="Clear search" hidden>Clear <span aria-hidden="true">×</span></button></div>
+        <div class="search-summary"><p id="result-count" role="status" aria-live="polite" aria-atomic="true">All {{count}} terms</p><span class="search-hint">Search terms &amp; definitions</span></div>
+      </div>
+      <div class="empty-state" id="empty-state" hidden><p class="empty-title">No terms found.</p><p>Try another word or a shorter phrase.</p><button id="reset-search" type="button">Show all terms <span aria-hidden="true">↗</span></button></div>
+      <div id="entries">{{sections}}</div>
+    </main>
+  </div>
+  <footer class="footer wrap">
+    <div><a class="footer-brand" href="./">Health Terms<span aria-hidden="true">.</span></a><p>An independent reference, thoughtfully put together.</p></div>
+    <div class="footer-details"><p>Definitions © Harvard Health Publishing. <a href="https://www.health.harvard.edu/medical-dictionary-of-health-terms">Read the original dictionary <span aria-hidden="true">↗</span></a></p><p>Content synchronized <time datetime="{{iso_date}}">{{date}}</time>. This is not a medical review date.</p><p>For understanding, not diagnosis. This dictionary is not a substitute for medical advice from a qualified clinician. This site is not affiliated with Harvard University.</p><a href="https://github.com/KnlnKS/harvard-med-dict-of-health-terms">About this project <span aria-hidden="true">↗</span></a></div>
+  </footer>
+</body>
+</html>
