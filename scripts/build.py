@@ -37,8 +37,9 @@ def build():
         for entry in entries:
             if entry["letter"] != letter:
                 continue
-            definitions = "".join(f"<p>{escape(definition)}</p>" for definition in entry["definitions"])
-            terms.append(f'<div class="entry" id="{anchor(entry)}"><dt><a href="#{anchor(entry)}">{escape(entry["term"])}</a></dt><dd>{definitions}</dd></div>')
+            definitions = escape(entry["definitions"][0]) if len(entry["definitions"]) == 1 else "".join(f"<p>{escape(definition)}</p>" for definition in entry["definitions"])
+            identifier = anchor(entry)
+            terms.append(f'<div class="entry" id="{identifier}"><dt><a href="#{identifier}">{escape(entry["term"])}</a></dt><dd>{definitions}</dd></div>')
         source = next(entry["source"] for entry in entries if entry["letter"] == letter)
         sections.append(
             f'<section class="letter-section" id="{letter}" aria-labelledby="heading-{letter}">'
