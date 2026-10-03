@@ -73,9 +73,7 @@ dd p + p { margin-top: 10px; }
 .empty-state { padding: 72px 0 96px; text-align: center; color: var(--muted); font-size: 14px; }
 .empty-title { color: var(--ink); font: 32px var(--serif); margin: 0 0 14px; }
 .empty-state button { margin-top: 14px; color: var(--crimson); background: transparent; border: 0; padding: 12px; font-size: 13px; }
-.footer { display: grid; grid-template-columns: 1fr 1.5fr; gap: 64px; padding-block: 40px 52px; border-top: 1px solid var(--line); }
-.footer-brand { font: 27px var(--serif); text-decoration: none; }
-.footer-brand span { color: var(--crimson); }
+.footer { padding-block: 40px 52px; border-top: 1px solid var(--line); }
 .footer p { font-size: 11px; line-height: 1.9; color: var(--muted); }
 .footer-details > p { margin: 0 0 12px; }
 .footer-details > a { color: var(--crimson); font-size: 11px; }
