@@ -5,9 +5,7 @@ on:
     branches: [main]
     paths:
       - site/**
-      - scripts/**
       - data/dictionary.json
-      - requirements.txt
       - .github/workflows/publish.yml
   schedule:
     - cron: '17 9 * * *'
@@ -25,6 +23,9 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  TOOL_VERSION: v1.0.0
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -33,61 +34,39 @@ jobs:
       contents: write
       pages: read
     outputs:
-      publish: ${{ steps.build.outputs.publish }}
+      publish: ${{ steps.publication.outputs.publish }}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
-      - name: Install importer dependency
-        if: github.event_name != 'push'
-        run: python -m pip install -r requirements.txt
+          ref: main
+      - name: Download verified dictionary CLI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .tools
+          gh release download "$TOOL_VERSION" --repo "$GITHUB_REPOSITORY" --pattern health-dictionary-linux-x86_64.tar.gz --pattern SHA256SUMS --dir .tools
+          cd .tools
+          sha256sum --check SHA256SUMS
+          tar -xzf health-dictionary-linux-x86_64.tar.gz
       - name: Synchronize all dictionary sections
-        id: sync
         if: github.event_name != 'push'
-        continue-on-error: true
         env:
           ALLOW_REMOVALS: ${{ inputs.allow_removals == true }}
         run: |
+          args=()
           if [ "$ALLOW_REMOVALS" = true ]; then
-            python scripts/sync.py --allow-removals
-          else
-            python scripts/sync.py
+            args+=(--allow-removals)
           fi
-      - name: Commit dictionary changes and daily heartbeat
-        if: always() && steps.sync.outcome != 'skipped'
-        env:
-          CHANGED: ${{ steps.sync.outputs.changed }}
-          ADDED: ${{ steps.sync.outputs.added }}
-          EDITED: ${{ steps.sync.outputs.edited }}
-          REMOVED: ${{ steps.sync.outputs.removed }}
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/dictionary.json data/sync-status.json
-          if ! git diff --cached --quiet; then
-            if [ "$CHANGED" = true ]; then
-              git commit -m "data: sync Harvard dictionary (+$ADDED / ~$EDITED / -$REMOVED)"
-            else
-              git commit -m 'chore: record daily dictionary sync heartbeat'
-            fi
-            git push origin HEAD:main
-          fi
-      - name: Report synchronization failure
-        if: always() && steps.sync.outcome == 'failure'
-        run: |
-          echo '::error::Harvard synchronization failed. The previous dictionary and published site are preserved. See data/sync-status.json for details.'
-          exit 1
+          .tools/health-dictionary update "${args[@]}"
       - name: Build static website
-        id: build
-        if: github.event_name == 'push' || steps.sync.outputs.changed == 'true'
-        run: |
-          python scripts/build.py
-          echo 'publish=true' >> "$GITHUB_OUTPUT"
+        run: .tools/health-dictionary build
+      - name: Compare with last successful publication
+        id: publication
+        run: .tools/health-dictionary publish-needed https://knlnks.github.io/harvard-med-dict-of-health-terms/version.json
       - uses: actions/configure-pages@v5
-        if: steps.build.outputs.publish == 'true'
+        if: steps.publication.outputs.publish == 'true'
       - uses: actions/upload-pages-artifact@v4
-        if: steps.build.outputs.publish == 'true'
+        if: steps.publication.outputs.publish == 'true'
         with:
           path: _site
 
