@@ -69,6 +69,7 @@ dt a { text-decoration: none; }
 dd { margin: 9px 0 0; max-width: 75ch; font-size: 15px; line-height: 1.8; color: #514e48; overflow-wrap: anywhere; }
 dd p { margin: 0; }
 dd p + p { margin-top: 10px; }
+mark { color: var(--crimson); background: transparent; font-weight: 650; }
 .empty-state { padding: 72px 0 96px; text-align: center; color: var(--muted); font-size: 14px; }
 .empty-title { color: var(--ink); font: 32px var(--serif); margin: 0 0 14px; }
 .empty-state button { margin-top: 14px; color: var(--crimson); background: transparent; border: 0; padding: 12px; font-size: 13px; }

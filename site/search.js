@@ -20,16 +20,51 @@ const format = new Intl.NumberFormat('en-US');
 let frame;
 let letterFrame;
 let activeLink;
+let highlighted = [];
+
+function clearHighlights() {
+  for (const [element, text] of highlighted) element.textContent = text;
+  highlighted = [];
+}
+
+function highlight(element, expression) {
+  const definition = element.querySelector('dd');
+  const parts = [element.querySelector('dt a'), ...(definition.children.length ? definition.children : [definition])];
+  for (const part of parts) {
+    const text = part.textContent;
+    expression.lastIndex = 0;
+    let match = expression.exec(text);
+    if (!match) continue;
+    const fragment = document.createDocumentFragment();
+    let start = 0;
+    do {
+      fragment.append(text.slice(start, match.index));
+      const mark = document.createElement('mark');
+      mark.textContent = match[0];
+      fragment.append(mark);
+      start = match.index + match[0].length;
+      match = expression.exec(text);
+    } while (match);
+    fragment.append(text.slice(start));
+    part.replaceChildren(fragment);
+    highlighted.push([part, text]);
+  }
+}
 
 function filter() {
-  const words = input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  const words = [...new Set(input.value.toLowerCase().trim().split(/\s+/).filter(Boolean))];
+  const expression = words.length && new RegExp(words.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
+  clearHighlights();
   let matches = 0;
   for (const group of groups) {
     let count = 0;
     for (const entry of group.entries) {
       const hidden = !words.every(word => entry.text.includes(word));
       if (entry.element.hidden !== hidden) entry.element.hidden = hidden;
-      if (!hidden) count++;
+      if (!hidden) {
+        count++;
+        if (expression) highlight(entry.element, expression);
+      }
     }
     matches += count;
     group.section.hidden = !count;
