@@ -25,11 +25,11 @@ const format = new Intl.NumberFormat('en-US');
 let frame;
 let letterFrame;
 let activeLink;
-let highlighted = [];
+const highlighted = [];
 
 function clearHighlights() {
   for (const [element, text] of highlighted) element.textContent = text;
-  highlighted = [];
+  highlighted.length = 0;
 }
 
 function highlight(element, expression) {
@@ -58,7 +58,9 @@ function highlight(element, expression) {
 
 function filter() {
   const words = [...new Set(input.value.toLowerCase().trim().split(/\s+/).filter(Boolean))];
-  const expression = words.length && new RegExp(words.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
+  const expression = words.length
+    ? new RegExp(words.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi')
+    : null;
   clearHighlights();
   let matches = 0;
   for (const group of groups) {

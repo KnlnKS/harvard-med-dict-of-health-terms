@@ -125,5 +125,4 @@ mark { color: var(--crimson); background: transparent; font-weight: 650; }
   .masthead, .letter-index, .search-tools, .empty-state, .skip-link, .source-link { display: none !important; }
   .dictionary-layout { display: block; border: 0; }
   .entry { break-inside: avoid; }
-  .footer { display: block; }
 }

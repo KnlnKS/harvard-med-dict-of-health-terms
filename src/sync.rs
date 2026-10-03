@@ -156,26 +156,26 @@ fn fetch_groups() -> Result<Vec<Group>> {
 }
 
 fn validate_removals(snapshot: &Snapshot, previous: &Snapshot, allow_removals: bool) -> Result<()> {
-    if !allow_removals {
-        for (label, letters) in [("dictionary", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")]
-            .into_iter()
-            .chain(SECTIONS)
-        {
-            let count = |snapshot: &Snapshot| {
-                snapshot
-                    .groups
-                    .iter()
-                    .filter(|group| letters.contains(group.letter))
-                    .map(|group| group.terms.len())
-                    .sum::<usize>()
-            };
-            let before = count(previous);
-            let after = count(snapshot);
-            ensure!(
-                after * 10 >= before * 9,
-                "Entry count dropped by more than 10% in {label}: {before} → {after}. Verify the source before using --allow-removals"
-            );
-        }
+    if allow_removals {
+        return Ok(());
+    }
+    for (label, letters) in
+        std::iter::once(("dictionary", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")).chain(SECTIONS)
+    {
+        let count = |snapshot: &Snapshot| {
+            snapshot
+                .groups
+                .iter()
+                .filter(|group| letters.contains(group.letter))
+                .map(|group| group.terms.len())
+                .sum::<usize>()
+        };
+        let before = count(previous);
+        let after = count(snapshot);
+        ensure!(
+            after * 10 >= before * 9,
+            "Entry count dropped by more than 10% in {label}: {before} → {after}. Verify the source before using --allow-removals"
+        );
     }
     Ok(())
 }
