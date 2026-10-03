@@ -2,11 +2,16 @@ const input = document.querySelector('#search');
 const clear = document.querySelector('#clear-search');
 const result = document.querySelector('#result-count');
 const empty = document.querySelector('#empty-state');
+const searchTools = document.querySelector('#search-tools');
+const mobile = matchMedia('(max-width: 700px)');
 const groups = [...document.querySelectorAll('.letter-section')].map(section => {
   const link = document.querySelector(`.letter-index a[href="#${section.id}"]`);
+  const heading = section.querySelector('.section-heading');
   return {
     section,
     link,
+    heading,
+    title: heading.querySelector('h2'),
     count: section.querySelector('.section-count'),
     indexCount: link.querySelector('.letter-count'),
     entries: [...section.querySelectorAll('.entry')].map(element => ({
@@ -97,13 +102,18 @@ function reset() {
 
 function currentLetter() {
   const top = parseFloat(getComputedStyle(groups[0].section).scrollMarginTop) + 1;
+  const clipTop = mobile.matches ? searchTools.getBoundingClientRect().bottom : 0;
   const atBottom = scrollY > 0 && Math.ceil(scrollY + innerHeight) >= document.documentElement.scrollHeight;
+  const updates = [];
   let current;
-  for (const { section, link } of groups) {
+  for (const { section, link, heading, title } of groups) {
     if (section.hidden) continue;
+    const visibility = clipTop && title.getBoundingClientRect().top < clipTop ? 'hidden' : '';
+    if (heading.style.visibility !== visibility) updates.push([heading, visibility]);
     if (current && !atBottom && section.getBoundingClientRect().top > top) break;
     current = link;
   }
+  for (const [heading, visibility] of updates) heading.style.visibility = visibility;
   if (current === activeLink) return;
   activeLink?.removeAttribute('aria-current');
   current?.setAttribute('aria-current', 'location');
@@ -126,4 +136,4 @@ window.addEventListener('scroll', () => {
   letterFrame = requestAnimationFrame(currentLetter);
 }, { passive: true });
 currentLetter();
-document.querySelector('#search-tools').hidden = false;
+searchTools.hidden = false;
