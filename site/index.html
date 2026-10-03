@@ -25,9 +25,8 @@
     <main id="dictionary" tabindex="-1">
       <h1 class="sr-only">Medical dictionary of health terms</h1>
       <div class="search-tools" id="search-tools" hidden>
-        <label for="search">Find a term or search a definition</label>
+        <div class="search-heading"><label for="search">Find a term or search a definition</label><p id="result-count" role="status" aria-live="polite" aria-atomic="true">All {{count}} terms</p></div>
         <div class="search-field"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="search" type="search" placeholder="Try “blood pressure”" autocomplete="off" spellcheck="false" aria-describedby="result-count"><button id="clear-search" type="button" aria-label="Clear search" hidden>Clear <span aria-hidden="true">×</span></button></div>
-        <div class="search-summary"><p id="result-count" role="status" aria-live="polite" aria-atomic="true">All {{count}} terms</p><span class="search-hint">Search terms &amp; definitions</span></div>
       </div>
       <div class="empty-state" id="empty-state" hidden><p class="empty-title">No terms found.</p><p>Try another word or a shorter phrase.</p><button id="reset-search" type="button">Show all terms <span aria-hidden="true">↗</span></button></div>
       <div id="entries">{{sections}}</div>
