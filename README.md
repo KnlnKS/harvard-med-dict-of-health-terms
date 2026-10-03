@@ -2,7 +2,7 @@
 
 A complete, single-page medical dictionary with definitions from Harvard Health Publishing. Browse all 26 letters, search terms and definitions, or read the entire dictionary without JavaScript.
 
-**[Open the dictionary](https://knlnks.github.io/harvard-med-dict-of-health-terms/)** · [Original Harvard dictionary](https://www.health.harvard.edu/medical-dictionary-of-health-terms)
+**[Open the dictionary](https://knlnks.github.io/harvard-med-dict-of-health-terms/)** · [Original Harvard dictionary](https://www.health.harvard.edu/a-through-c)
 
 The website uses vanilla HTML, CSS, and a small search script. There are no external fonts, runtime data requests, or frontend dependencies. Python builds the HTML from a committed dictionary snapshot. Beautiful Soup is used only when importing Harvard's four source pages.
 
