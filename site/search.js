@@ -18,6 +18,8 @@ const groups = [...document.querySelectorAll('.letter-section')].map(section => 
 const total = groups.reduce((sum, group) => sum + group.entries.length, 0);
 const format = new Intl.NumberFormat('en-US');
 let frame;
+let letterFrame;
+let activeLink;
 
 function filter() {
   const words = input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -41,7 +43,6 @@ function filter() {
       group.link.removeAttribute('href');
       group.link.setAttribute('aria-disabled', 'true');
       group.link.setAttribute('aria-label', `${group.section.id}, no matching terms`);
-      group.link.removeAttribute('aria-current');
     }
   }
   clear.hidden = !input.value;
@@ -60,10 +61,18 @@ function reset() {
 }
 
 function currentLetter() {
+  const top = parseFloat(getComputedStyle(groups[0].section).scrollMarginTop) + 1;
+  const atBottom = scrollY > 0 && Math.ceil(scrollY + innerHeight) >= document.documentElement.scrollHeight;
+  let current;
   for (const { section, link } of groups) {
-    if (location.hash === `#${section.id}` && !section.hidden) link.setAttribute('aria-current', 'location');
-    else link.removeAttribute('aria-current');
+    if (section.hidden) continue;
+    if (current && !atBottom && section.getBoundingClientRect().top > top) break;
+    current = link;
   }
+  if (current === activeLink) return;
+  activeLink?.removeAttribute('aria-current');
+  current?.setAttribute('aria-current', 'location');
+  activeLink = current;
 }
 
 input.addEventListener('input', () => {
@@ -76,5 +85,10 @@ input.addEventListener('keydown', event => {
 clear.addEventListener('click', reset);
 document.querySelector('#reset-search').addEventListener('click', reset);
 window.addEventListener('hashchange', currentLetter);
+window.addEventListener('resize', currentLetter);
+window.addEventListener('scroll', () => {
+  cancelAnimationFrame(letterFrame);
+  letterFrame = requestAnimationFrame(currentLetter);
+}, { passive: true });
 currentLetter();
 document.querySelector('#search-tools').hidden = false;
